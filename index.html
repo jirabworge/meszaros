@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mészáros Lőrinc vagyonnövekedése</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(to bottom right, #3b82f6, #8b5cf6);
+            color: white;
+        }
+        .container {
+            background-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+        }
+        h1 {
+            font-size: 1.5rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        h2 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+        #wealth {
+            font-size: 4rem;
+            font-weight: bold;
+            color: #4ade80;
+            margin-bottom: 1rem;
+            transition: transform 0.5s;
+        }
+        .small-text {
+            font-size: 0.875rem;
+            opacity: 0.75;
+        }
+        .center {
+            text-align: center;
+        }
+        #playSound {
+            background-color: #4ade80;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 1rem;
+        }
+        #playSound:hover {
+            background-color: #22c55e;
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .info-item {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+        }
+        .gif-container {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        .gif-container img {
+            max-width: 100%;
+            border-radius: 0.5rem;
+            max-height: 200px;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="gif-container">
+            <img src="https://media.tenor.com/CnHrUR_-4zgAAAAM/matematikus-mib%C5%91l.gif" alt="Matematikus mibõl">
+        </div>
+        <h1>Lőrinc átlagos éves vagyonnövekedése: <span id="annualWealth"></span> Ft (98 milliárd)</h1>
+        <div class="center">
+            <h2>Ebben az évben, <span id="startDate"></span> óta:</h2>
+            <p id="wealth"></p>
+            <p class="small-text"> (milliárd forint) másodpercenként frissül</p>
+            <p class="small-text">mai dátum: <span id="currentDate"></span></p>
+            <div class="info-grid">
+                <div class="info-item">
+                    <p class="small-text">Napi kereset:</p>
+                    <p><span id="dailyWealth"></span> Ft</p>
+                </div>
+                <div class="info-item">
+                    <p class="small-text">Óránkénti kereset:</p>
+                    <p><span id="hourlyWealth"></span> Ft</p>
+                </div>
+                <div class="info-item">
+                    <p class="small-text">Percenkénti kereset:</p>
+                    <p><span id="minutelyWealth"></span> Ft</p>
+                </div>
+                <div class="info-item">
+                    <p class="small-text">Másodpercenkénti kereset:</p>
+                    <p><span id="secondlyWealth"></span> Ft</p>
+                </div>
+            </div>
+            <button id="playSound">Reagálok</button>
+        </div>
+    </div>
+
+    <audio id="soundEffect">
+        <source src="sound.m4a" type="audio/mp4">
+        <source src="sound.mp3" type="audio/mpeg">
+        A böngésződ nem támogatja az audio elemet.
+    </audio>
+
+    <script>
+        const annualWealth = 98230000000;
+        const dailyWealth = 269123288;
+        const hourlyWealth = 11213470;
+        const minutelyWealth = 186891;
+        const secondlyWealth = 3115;
+        const startDate = new Date('2024-01-01T00:00:00');
+        const currentDate = new Date();
+
+        function formatDate(date) {
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return date.toLocaleDateString('hu-HU', options);
+        }
+
+        function formatNumber(number) {
+            return number.toLocaleString('hu-HU', { maximumFractionDigits: 0 });
+        }
+
+        document.getElementById('annualWealth').textContent = formatNumber(annualWealth);
+        document.getElementById('dailyWealth').textContent = formatNumber(dailyWealth);
+        document.getElementById('hourlyWealth').textContent = formatNumber(hourlyWealth);
+        document.getElementById('minutelyWealth').textContent = formatNumber(minutelyWealth);
+        document.getElementById('secondlyWealth').textContent = formatNumber(secondlyWealth);
+        document.getElementById('startDate').textContent = formatDate(startDate);
+        document.getElementById('currentDate').textContent = formatDate(currentDate);
+
+        const wealthElement = document.getElementById('wealth');
+
+        function updateWealth() {
+            const elapsedSeconds = Math.floor((Date.now() - startDate.getTime()) / 1000);
+            const currentWealth = elapsedSeconds * secondlyWealth;
+
+            wealthElement.textContent = formatNumber(currentWealth) + ' Ft';
+            wealthElement.style.transform = 'scale(1.1)';
+            setTimeout(() => wealthElement.style.transform = 'scale(1)', 500);
+        }
+
+        updateWealth();
+        setInterval(updateWealth, 1000);
+
+        // Hang lejátszás
+        const soundEffect = document.getElementById('soundEffect');
+        const playButton = document.getElementById('playSound');
+
+        playButton.addEventListener('click', () => {
+            soundEffect.currentTime = 0; // Visszaállítás a hang elejére
+            soundEffect.play().catch(e => console.error("A hang lejátszása sikertelen:", e));
+        });
+    </script>
+</body>
+</html>

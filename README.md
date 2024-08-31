@@ -1,0 +1,2 @@
+# meszaros
+Mészáros Lőrinc vagyonszámláló
